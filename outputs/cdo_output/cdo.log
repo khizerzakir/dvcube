@@ -1,0 +1,37 @@
+Starting CDO preprocessing pipeline at Tue Jan 27 13:00:51 UTC 2026
+GRID file: ./grid.txt
+Bounding box: -18.2, 40.2, 9.8, 20.2
+Resolution: 0.1
+Remap method: bilinear
+Buffer: 0.2
+
+Processing h141_2010010400_R01.nc ...
+cdo    sellonlatbox: Processed 25934400 values from 4 variables over 1 timestep [0.52s 205MB].
+cdo    remapbil: Bilinear weights from lonlat (584x103) to lonlat (580x100) grid, with source mask (57167)
+cdo    remapbil: Processed 240608 values from 4 variables over 1 timestep [0.04s 60MB].
+cdo    sellonlatbox: Processed 232000 values from 4 variables over 1 timestep [0.01s 50MB].
+Finished h141_2010010400_R01.nc in 1s
+Processing h141_2010010100_R01.nc ...
+cdo    sellonlatbox: Processed 25934400 values from 4 variables over 1 timestep [0.52s 204MB].
+cdo    remapbil: Bilinear weights from lonlat (584x103) to lonlat (580x100) grid, with source mask (57167)
+cdo    remapbil: Processed 240608 values from 4 variables over 1 timestep [0.04s 60MB].
+cdo    sellonlatbox: Processed 232000 values from 4 variables over 1 timestep [0.01s 50MB].
+Finished h141_2010010100_R01.nc in 1s
+Processing h141_2010010200_R01.nc ...
+cdo    sellonlatbox: Processed 25934400 values from 4 variables over 1 timestep [0.52s 205MB].
+cdo    remapbil: Bilinear weights from lonlat (584x103) to lonlat (580x100) grid, with source mask (57167)
+cdo    remapbil: Processed 240608 values from 4 variables over 1 timestep [0.04s 61MB].
+cdo    sellonlatbox: Processed 232000 values from 4 variables over 1 timestep [0.01s 50MB].
+Finished h141_2010010200_R01.nc in 0s
+Processing h141_2010010300_R01.nc ...
+cdo    sellonlatbox: Processed 25934400 values from 4 variables over 1 timestep [0.52s 205MB].
+cdo    remapbil: Bilinear weights from lonlat (584x103) to lonlat (580x100) grid, with source mask (57167)
+cdo    remapbil: Processed 240608 values from 4 variables over 1 timestep [0.04s 60MB].
+cdo    sellonlatbox: Processed 232000 values from 4 variables over 1 timestep [0.01s 50MB].
+Finished h141_2010010300_R01.nc in 1s
+Processing h141_2010010500_R01.nc ...
+cdo    sellonlatbox: Processed 25934400 values from 4 variables over 1 timestep [0.52s 205MB].
+cdo    remapbil: Bilinear weights from lonlat (584x103) to lonlat (580x100) grid, with source mask (57167)
+cdo    remapbil: Processed 240608 values from 4 variables over 1 timestep [0.04s 60MB].
+cdo    sellonlatbox: Processed 232000 values from 4 variables over 1 timestep [0.01s 50MB].
+Finished h141_2010010500_R01.nc in 1s
