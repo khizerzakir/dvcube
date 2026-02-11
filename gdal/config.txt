@@ -1,0 +1,11 @@
+# Configuration file for gdal_preprocess.sh
+# Main paths and processing settings
+
+input_folder=/home/kzakir/dvcube/test/test_data/2010
+output_folder=/home/kzakir/dvcube/test/outputs
+
+# Parallel processing (number of concurrent processes)
+parallel=4
+
+# Source GDAL-specific parameters from separate file
+source_gdal=gdal.txt

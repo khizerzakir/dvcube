@@ -1,0 +1,21 @@
+[paths]
+data_folder = ../test_data/2010
+output_base = ../outputs/xarray_outputs
+
+[grid]
+res = 0.1
+
+[extent]
+# Sahel region extent: West=-20, East=55, South=10, North=20
+te_w = -20.0
+te_s = 10.0
+te_e = 55.0
+te_n = 20.0
+
+buffer = 0.2
+[processing]
+n_workers = 8
+regrid_method = bilinear
+compression_level = 4
+scheduler = threads
+log_level = INFO
