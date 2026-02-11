@@ -1,40 +1,30 @@
 # GDAL NetCDF Preprocessing Script
 
-Processes multi-variable NetCDF files, regridding and clipping each subdataset (variable) to a target geographic extent. Each variable is saved as a separate file organized by variable name within month folders.
+Processes multi-variable NetCDF files using **gdalwarp only**, regridding and clipping each subdataset (variable) to the Sahel region. Each variable is saved as a separate file organized by variable name within month folders, with metadata preserved.
 
 ## Overview
 
 **Input**: NetCDF files with multiple subdatasets/variables  
 **Output**: Individual NetCDF files organized by variable in `YYYY/MM/variable/` folders  
-**Processing**: Regridding to 0.1° resolution, clipping to Sahel region, bilinear resampling  
-**Performance**: ~4 files/second with 4 parallel workers
+**Processing**: Warp to Sahel region (W: -20°, E: 55°, S: 10°, N: 20°), 0.1° resolution, bilinear resampling  
+**Performance**: Parallel processing with 4 workers  
+**Metadata**: Preserved from source files with `ncrename`
 
 ## Quick Start
 
 ```bash
-# Run with default configuration (uses config.txt)
-bash gdal_preprocess.sh
+# Run with input and output directories
+cd gdal
+./gdal_warp_translate.sh <input_dir> <output_dir>
 
-# Or specify input/output folders
-bash gdal_preprocess.sh /path/to/input /path/to/output
+# Example with test data
+./gdal_warp_translate.sh ../testdata1 ../outputs/gdal_output
 ```
 
 ## Configuration
 
-### **config.txt**
-Main configuration file with paths and processing parameters:
-
-```ini
-# Input and output paths
-input_folder = /home/kzakir/dvcube/test/test_data/2010
-output_folder = /home/kzakir/dvcube/test/outputs
-
-# Parallel processing
-parallel = 4
-```
-
 ### **gdal.txt**
-GDAL-specific parameters for regridding and clipping:
+GDAL-specific parameters for warping and clipping:
 
 ```bash
 # Grid resolution (degrees)
@@ -42,22 +32,23 @@ res_x=0.1
 res_y=0.1
 
 # Target extent (West, South, East, North) - Sahel region
-te_w=-18.0
+# Covers from Mauritania/Senegal (West) to Ethiopia (East)
+te_w=-20.0
 te_s=10.0
-te_e=40.0
+te_e=55.0
 te_n=20.0
 
 # Resampling method: bilinear, nearest, cubic, mode, average
-resample_method="bilinear"
+resample_method=bilinear
 
 # No-data value in output
-nodata="-9999"
+nodata=nan
 ```
 
 ## Output Structure
 
 ```
-outputs/
+outputs/gdal_output/
 └── 2010/                           # Year
     └── 01/                         # Month
         ├── var40/                  # Variable name
@@ -67,16 +58,18 @@ outputs/
         ├── var41/
         ├── var42/
         └── var43/
+└── gdal.log
 ```
 
-**Filename pattern**: `{original_name}_{variable_name}.nc`
+**Filename pattern**: `{original_name}_{variable_name}.nc`  
+**Metadata**: Variable names preserved with `ncrename`
 
 ## Key Commands Explained
 
 ### 1. **get_date() - Extract Date from Filename**
 ```bash
 get_date() {
-    echo "$1" | grep -oE '(19|20)[0-9]{6}' | head -n1 || true
+    grep -oE '(19|20)[0-9]{6}' <<< "$1" | head -1 || echo ""
 }
 ```
 **Function**: Extracts 8-digit date (YYYYMMDD) from filename  
@@ -85,56 +78,41 @@ get_date() {
 
 **How it works**:
 - `grep -oE '(19|20)[0-9]{6}'`: Matches century (19 or 20) + 6 digits (YYMMDD)
-- `head -n1`: Takes first match if multiple dates exist
-- `|| true`: Returns success even if no date found (prevents exit)
+- `head -1`: Takes first match if multiple dates exist
+- `|| echo ""`: Returns empty string if no date found
 
-### 2. **gdal_translate - Convert NetCDF to GeoTIFF**
+### 2. **gdalwarp - Direct Warp (No Translate)**
 ```bash
-gdal_translate -q -of GTiff -ot Float32 "$infile" "$tmp_tif"
-```
-
-**Parameters**:
-- `-q`: Quiet mode (suppress progress messages)
-- `-of GTiff`: Output format as GeoTIFF
-- `-ot Float32`: Output data type (32-bit floating point for precision)
-
-**Why**: GDAL processes subdatasets more reliably as GeoTIFF before regridding
-
-### 3. **gdalwarp - Regrid and Clip** (Core operation)
-```bash
-gdalwarp -q -overwrite -s_srs EPSG:4326 -t_srs EPSG:4326 -of NetCDF \
+gdalwarp -overwrite -s_srs EPSG:4326 -t_srs EPSG:4326 -of NetCDF \
     -te $TE_W $TE_S $TE_E $TE_N \
     -tr $RES_X $RES_Y -r $RESAMPLE_METHOD \
-    -dstnodata $NODATA "$tmp_tif" "$out"
+    -dstnodata $NODATA "$sub" "$out"
 ```
 
 **Key parameters**:
 
-| Flag | Example | Meaning |
-|------|---------|---------|
-| `-s_srs EPSG:4326` | Input WGS84 | Source Spatial Reference System |
-| `-t_srs EPSG:4326` | Output WGS84 | Target Spatial Reference System |
-| `-of NetCDF` | Format | Output format (NetCDF instead of default GeoTIFF) |
-| `-te W S E N` | `-18 10 40 20` | Target Extent: West, South, East, North (bounding box) |
+| Flag | Value | Meaning |
+|------|-------|---------|
+| `-s_srs EPSG:4326` | WGS84 | Source Spatial Reference System |
+| `-t_srs EPSG:4326` | WGS84 | Target Spatial Reference System |
+| `-of NetCDF` | Format | Output format (NetCDF) |
+| `-te W S E N` | `-20 10 55 20` | Target Extent: West, South, East, North (Sahel region) |
 | `-tr RES_X RES_Y` | `0.1 0.1` | Target Resolution in degrees |
-| `-r bilinear` | Resampling method | nearest, bilinear, cubic, mode, average |
-| `-dstnodata` | `-9999` | No-data value for output |
+| `-r bilinear` | Resampling | nearest, bilinear, cubic, mode, average |
+| `-dstnodata nan` | No-data value | Value for missing/invalid data in output |
 | `-overwrite` | — | Overwrite existing files |
-| `-q` | — | Quiet mode |
 
-**Examples of -te (Target Extent)**:
+**Sahel Region Extent**:
 ```bash
-# Sahel region
--te -18 10 40 20          # W=-18, S=10, E=40, N=20
-
-# West Africa
--te -18 -5 50 20          # Larger area
-
-# Europe
--te -10 35 50 72          # Different region
+-te -20.0 10.0 55.0 20.0    # W=-20°, S=10°, E=55°, N=20°
 ```
 
-### 4. **Subdataset Extraction - gdalinfo**
+**Processing directly from NetCDF subdatasets**:
+- Input: `NETCDF:"/path/file.nc":var40`
+- Output: NetCDF with warped data
+- No intermediate GeoTIFF conversion needed
+
+### 3. **Subdataset Detection - gdalinfo**
 ```bash
 gdalinfo "$infile" 2>/dev/null | grep "SUBDATASET_.*_NAME="
 ```
@@ -149,54 +127,62 @@ SUBDATASET_4_NAME=NETCDF:"/path/file.nc":var43
 
 **Format**: `NETCDF:"file_path":variable_name`
 
-### 5. **Variable Name Extraction**
+### 4. **Variable Name Extraction**
 ```bash
-var_sub=$(echo "$subdata" | awk -F':' '{print $NF}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+get_var_name() { echo "$1" | awk -F':' '{print $NF}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' ; }
 ```
 
 **How it works**:
 - `awk -F':' '{print $NF}'`: Split by colon, take last field
 - Example: `NETCDF:"/path/file.nc":var40` → `var40`
-- `sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`: Remove leading/trailing whitespace
+- `sed`: Remove leading/trailing whitespace
+
+### 5. **Metadata Preservation - ncrename**
+```bash
+ncrename -v "Band1","$var_name" "$output_file"
+```
+
+**Function**: Renames the output variable to preserve original name  
+**Why**: GDAL creates "Band1" by default; this restores the original variable name  
+**Example**: Renames `Band1` → `var40` to match source file
 
 ### 6. **Parallel Processing with xargs**
 ```bash
-find "$IN" -type f -name "*.nc" -print0 | \
-    xargs -0 -P "$PARALLEL" -I {} bash -c 'process_one "$1"' _ {}
+find "$IN" -type f \( -iname "*.nc" -o -iname "*.NC" \) ! -iname "test.nc" ! -iname "output.nc" -print0 | \
+    xargs -0 -P 4 -I {} bash -c 'process_file "$@"' _ {}
 ```
 
 **Parameters**:
-- `find`: Search for *.nc files
+- `find`: Search for *.nc files (case-insensitive)
+- `! -iname "test.nc" ! -iname "output.nc"`: Exclude test files
 - `-print0`: Use null delimiter (handles spaces in filenames safely)
 - `xargs -0`: Read null-delimited input
 - `-P 4`: Run 4 processes in parallel
 - `-I {}`: Replace `{}` with filename argument
-- `bash -c 'process_one "$1"'`: Execute function in subshell
-- `_`: Script name (placeholder)
-- `{}`: Filename (replaced by xargs)
 
 **Why null delimiters**: Prevents errors with spaces/special chars in filenames
 
 ## Processing Workflow
 
 ```
-Input NetCDF (e.g., 4 subdatasets: var40, var41, var42, var43)
+Input NetCDF with subdatasets (var40, var41, var42, var43)
         ↓
 [For each subdataset in parallel]
         ↓
 Extract date from filename (get_date)
         ↓
-gdal_translate → Convert to GeoTIFF
+Create output directories (YYYY/MM/var_name/)
         ↓
-gdalwarp → Regrid + Clip to extent
+gdalwarp: Direct warp from NetCDF subdataset to NetCDF
+  - Reprojects to EPSG:4326
+  - Clips to Sahel region (W: -20°, E: 55°, S: 10°, N: 20°)
+  - Resamples to 0.1° × 0.1° resolution
         ↓
-Extract variable name (var_sub)
-        ↓
-Create variable folder (YYYY/MM/var_name/)
+ncrename: Preserve variable name in output
         ↓
 Save as {original_name}_{variable_name}.nc
         ↓
-Log success/error
+Log success/error to gdal.log
 ```
 
 ## Handling Subdatasets
