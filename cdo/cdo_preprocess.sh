@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# CDO Preprocessing - Compact Version
-# Workflow: Buffer Clip → Remap → Project → Final Clip
+# CDO Preprocessing
+# Usage: ./cdo_preprocess.sh (ensure config.txt is in the same directory with required variables)
+# Usage: ./cdo_preprocess.sh <input_folder> <output_folder> <grid_file>
 
 source ./config.txt
 
@@ -16,6 +17,8 @@ CLIP_SOUTH=$(awk -v s="$SOUTH" -v b="$BUFFER" 'BEGIN {print s - b}')
 CLIP_NORTH=$(awk -v n="$NORTH" -v b="$BUFFER" 'BEGIN {print n + b}')
 
 LOG="${OUT}/cdo.log" && mkdir -p "$OUT" && echo "CDO pipeline at $(date)" >> "$LOG"
+
+start_time=$(date +%s)
 
 process_cdo() {
     local file="$1" base ymd yyyy mm outdir outfile tmp1 tmp2 start end remap_op
@@ -42,8 +45,8 @@ process_cdo() {
     cdo -L -f nc4 -O -${remap_op},"$GRID" "$tmp1" "$tmp2" 2>>"$LOG" && \
     # Step 3: Final exact clip
     cdo -L -f nc4 -O -sellonlatbox,"$WEST","$EAST","$SOUTH","$NORTH" "$tmp2" "$outfile" 2>>"$LOG" && \
-    echo "✓ $base ($(( $(date +%s) - start ))s)" >> "$LOG" || \
-    echo "✗ $base failed" >> "$LOG"
+    echo "$base ($(( $(date +%s) - start ))s)" >> "$LOG" || \
+    echo "$base failed" >> "$LOG"
 }
 
 export -f process_cdo
@@ -51,4 +54,5 @@ export OUT LOG CLIP_WEST CLIP_EAST CLIP_SOUTH CLIP_NORTH WEST SOUTH EAST NORTH G
 
 find "$IN" -type f -name "*.nc" -print0 | xargs -0 -P "$PARALLEL" -I {} bash -c 'process_cdo "$@"' _ {}
 
-echo "Finished at $(date)" >> "$LOG"
+echo "" >> "$LOG"
+echo "Finished at $(date) - Time: $(($(date +%s)-start_time))s" >> "$LOG"

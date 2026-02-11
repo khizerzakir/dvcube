@@ -1,0 +1,157 @@
+# =============================================================================
+# Virtual Environments
+# =============================================================================
+# Python virtual environments
+cube-sample/
+venv/
+env/
+ENV/
+.venv
+.env
+
+# =============================================================================
+# Python Package & Build
+# =============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# =============================================================================
+# IDE & Editor
+# =============================================================================
+# VS Code
+.vscode/
+*.code-workspace
+.settings/
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+.vim/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# General
+.DS_Store
+Thumbs.db
+
+# =============================================================================
+# Data & Output Files
+# =============================================================================
+# Large data files
+*.nc
+*.nc4
+*.hdf5
+*.h5
+*.zarr/
+
+# Output directories
+outputs/
+results/
+temp/
+tmp/
+cache/
+
+# Data directories (keep structure, ignore data)
+testdata1/
+testdata2/
+cdo/
+gdal/
+xarray/
+
+# =============================================================================
+# Jupyter & Notebooks
+# =============================================================================
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# IPython
+profile_default/
+ipython_config.py
+
+# =============================================================================
+# OS & System Files
+# =============================================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =============================================================================
+# Logs
+# =============================================================================
+*.log
+*.logs
+cdo.log
+gdal.log
+
+# =============================================================================
+# Keep these files in git
+# =============================================================================
+!requirements.txt
+!uv.lock
+!pyproject.toml
+!.gitignore
+!README.md

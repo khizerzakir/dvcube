@@ -1,20 +1,19 @@
-IN=../testdata1/2010
+# CDO Preprocessing Configuration
+
+# Input and Output Paths (relative to cdo/ directory)
+IN=../testdata1
+# IN=../testdata2
 OUT=../outputs/cdo_output
 GRID=./grid.txt
 
-parallel=4
-# Bounding box for Sahel region (West=-20, East=55, South=10, North=20)
+# Processing Parameters
+PARALLEL=4
+REMAP_METHOD=bilinear
+BUFFER=0.2
+RES=0.1
+
+# Sahel Region Bounding Box
 WEST=-20.0
 SOUTH=10.0
 EAST=55.0
 NORTH=20.0
-
-# Resolution
-RES=0.1
-
-# interpolation
-REMAP_METHOD=bilinear
-
-# buffered
-
-BUFFER=0.2

@@ -1,10 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# GDAL 
+# GDAL Warp Script
 # Usage: ./gdal_warp_translate.sh [input_dir] [output_dir]
+# If no arguments provided, reads from config.txt
 
-IN="${1:-.}" OUT="${2:?ERROR: output directory required}"
+# Load config file if arguments not provided
+if [[ $# -eq 0 ]]; then
+    [[ -f "./config.txt" ]] || { echo "Error: config.txt not found"; exit 1; }
+    source "./config.txt"
+    IN="$input_folder"
+    OUT="$output_folder"
+else
+    IN="${1:?ERROR: input directory required}"
+    OUT="${2:?ERROR: output directory required}"
+fi
+
 [[ -f "./gdal.txt" ]] || { echo "Error: gdal.txt not found"; exit 1; }
 source "./gdal.txt"
 
@@ -45,7 +56,7 @@ process_file() {
     
     while read -r sub; do
         var="$(get_var_name "$sub")" && vdir="${outdir}/${var}" && mkdir -p "$vdir"
-        warp_sub "$sub" "$var" "${vdir}/${base%.nc}_${var}.nc" && echo "  $var → ${vdir##*/}/" >> "$LOG" || echo "ERROR: $var failed" >> "$LOG"
+        warp_sub "$sub" "$var" "${vdir}/${base%.nc}_${var}_processed.nc" && echo "  $var → ${vdir##*/}/" >> "$LOG" || echo "ERROR: $var failed" >> "$LOG"
     done <<< "$subs"
 }
 
