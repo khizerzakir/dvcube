@@ -1,0 +1,10 @@
+# GDAL processing parameters
+# Sahel region extent: West=-20, East=55, South=10, North=20
+res_x=0.1
+res_y=0.1
+te_w=-20.0
+te_s=10.0
+te_e=55.0
+te_n=20.0
+resample_method=bilinear
+nodata=nan
