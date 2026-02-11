@@ -202,4 +202,3 @@ Each tool generates a log file in its output directory:
 - `outputs/gdal_output/gdal.log`
 
 Check these logs to monitor progress and troubleshoot issues.
-

@@ -1,15 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# GDAL 
-# Usage: ./gdal_warp_translate.sh [input_dir] [output_dir]
+# GDAL Warp Script with Dynamic Resolution
+# Usage: ./gdal_warp_translate.sh <resolution> [input_dir] [output_dir]
+#        ./gdal_warp_translate.sh 0.05          (reads input/output from config.txt)
+#        ./gdal_warp_translate.sh 0.05 /in /out (explicit paths)
 
-IN="${1:-.}" OUT="${2:?ERROR: output directory required}"
+RESOLUTION="${1:-}"
+
+if [ -z "$RESOLUTION" ]; then
+    echo "Usage: $0 <resolution> [input_dir] [output_dir]"
+    echo "Example: $0 0.05"
+    echo "Example: $0 0.05 /path/to/input /path/to/output"
+    exit 1
+fi
+
+# Load config file if paths not provided
+if [[ $# -eq 1 ]]; then
+    [[ -f "./config.txt" ]] || { echo "Error: config.txt not found"; exit 1; }
+    source "./config.txt"
+    IN="$input_folder"
+    OUT="$output_folder"
+else
+    IN="${2:?ERROR: input directory required}"
+    OUT="${3:?ERROR: output directory required}"
+fi
+
 [[ -f "./gdal.txt" ]] || { echo "Error: gdal.txt not found"; exit 1; }
 source "./gdal.txt"
 
-RES_X="${RES_X:-$res_x}"
-RES_Y="${RES_Y:-$res_y}"
+RES_X="$RESOLUTION"
+RES_Y="$RESOLUTION"
 TE_W="${TE_W:-$te_w}"
 TE_S="${TE_S:-$te_s}"
 TE_E="${TE_E:-$te_e}"
@@ -45,7 +66,7 @@ process_file() {
     
     while read -r sub; do
         var="$(get_var_name "$sub")" && vdir="${outdir}/${var}" && mkdir -p "$vdir"
-        warp_sub "$sub" "$var" "${vdir}/${base%.nc}_${var}.nc" && echo "  $var → ${vdir##*/}/" >> "$LOG" || echo "ERROR: $var failed" >> "$LOG"
+        warp_sub "$sub" "$var" "${vdir}/${base%.nc}_${var}_processed.nc" && echo "  $var → ${vdir##*/}/" >> "$LOG" || echo "ERROR: $var failed" >> "$LOG"
     done <<< "$subs"
 }
 
