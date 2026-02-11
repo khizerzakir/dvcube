@@ -3,7 +3,7 @@ name = "dvcube-test"
 version = "0.1.0"
 description = "Climate Data Cube - Virtual Zarr Creation & Performance Benchmarking"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "xarray>=2025.6.1",
     "zarr>=2.18.3",
@@ -19,4 +19,5 @@ dependencies = [
     "geopandas>=1.1.1",
     "shapely",
     "dask[distributed]>=2025.10.0",
+    "virtualizarr[hdf,icechunk]>=1.2.0",
 ]
