@@ -1,4 +1,4 @@
-IN=../test_data/2010
+IN=../testdata1/2010
 OUT=../outputs/cdo_output
 GRID=./grid.txt
 
