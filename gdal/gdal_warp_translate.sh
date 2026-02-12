@@ -66,7 +66,7 @@ process_file() {
     
     while read -r sub; do
         var="$(get_var_name "$sub")" && vdir="${outdir}/${var}" && mkdir -p "$vdir"
-        warp_sub "$sub" "$var" "${vdir}/${base%.nc}_${var}_processed.nc" && echo "  $var → ${vdir##*/}/" >> "$LOG" || echo "ERROR: $var failed" >> "$LOG"
+        warp_sub "$sub" "$var" "${vdir}/${base%.*}_${var}_processed.nc" && echo "  $var → ${vdir##*/}/" >> "$LOG" || echo "ERROR: $var failed" >> "$LOG"
     done <<< "$subs"
 }
 
