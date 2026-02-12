@@ -5,7 +5,6 @@ description = "Climate Data Cube - Virtual Zarr Creation & Performance Benchmark
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "xarray>=2025.6.1",
     "zarr>=2.18.3",
     "numpy>=2.2.6",
     "pandas>=2.3.2",
@@ -21,5 +20,6 @@ dependencies = [
     "dask[distributed]>=2025.10.0",
     "ipykernel>=7.2.0",
     "jupyter>=1.1.1",
+    "xarray>=2025.11.0",
     "h5py>=3.15.1",
 ]

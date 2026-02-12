@@ -617,7 +617,7 @@ requires-dist = [
     { name = "rioxarray", specifier = ">=0.19.0" },
     { name = "scipy", specifier = ">=1.15.3" },
     { name = "shapely" },
-    { name = "xarray", specifier = ">=2025.6.1" },
+    { name = "xarray", specifier = ">=2025.11.0" },
     { name = "zarr", specifier = ">=2.18.3" },
 ]
 
