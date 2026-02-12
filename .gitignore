@@ -26,6 +26,7 @@ Thumbs.db
 outputs/
 testdata1/
 testdata2/
+GIT_CHEATBOOK.md
 
 # Jupyter
 .ipynb_checkpoints/
