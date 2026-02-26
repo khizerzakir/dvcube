@@ -8,8 +8,9 @@ set -euo pipefail
 
 RESOLUTION="${1:-}"
 source ./config.txt
-: "${IN:?input folder missing}" "${OUT:?output folder missing}"
+: "${IN:?input folder missing}" "${OUT:?output folder missing}" "${DATASET_TYPE:?dataset type missing}"
 : "${WEST:?west missing}" "${SOUTH:?south missing}" "${EAST:?east missing}" "${NORTH:?north missing}"
+OUT="${OUT}/${DATASET_TYPE}"
 
 # If resolution not provided, read from config.txt RES variable
 if [ -z "$RESOLUTION" ]; then

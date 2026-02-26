@@ -21,6 +21,8 @@ if [[ $# -eq 1 ]]; then
     source "./config.txt"
     IN="$input_folder"
     OUT="$output_folder"
+    : "${DATASET_TYPE:?dataset type missing}"
+    OUT="${OUT}/${DATASET_TYPE}"
 else
     IN="${2:?ERROR: input directory required}"
     OUT="${3:?ERROR: output directory required}"
