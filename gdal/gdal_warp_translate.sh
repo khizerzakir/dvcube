@@ -2,31 +2,37 @@
 set -euo pipefail
 
 # GDAL Warp Script with Dynamic Resolution
-# Usage: ./gdal_warp_translate.sh <resolution> [input_dir] [output_dir]
-#        ./gdal_warp_translate.sh 0.05          (reads input/output from config.txt)
-#        ./gdal_warp_translate.sh 0.05 /in /out (explicit paths)
+# Usage: ./gdal_warp_translate.sh -r <resolution>                                   (from config.txt, override resolution)
+# Usage: ./gdal_warp_translate.sh -r 0.05 -d rzsm                                   (from config.txt, override resolution and dataset)
+# Usage: ./gdal_warp_translate.sh -r 0.05 -i /in -o /out -d rzsm                   (override all)
 
-RESOLUTION="${1:-}"
+[[ -f "./config.txt" ]] || { echo "Error: config.txt not found"; exit 1; }
+source "./config.txt"
+: "${DATASET_TYPE:?dataset type missing}"
 
-if [ -z "$RESOLUTION" ]; then
-    echo "Usage: $0 <resolution> [input_dir] [output_dir]"
-    echo "Example: $0 0.05"
-    echo "Example: $0 0.05 /path/to/input /path/to/output"
+# Parse named arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -r|--resolution) RESOLUTION="$2"; shift 2 ;;
+        -i|--input) input_folder="$2"; shift 2 ;;
+        -o|--output) output_folder="$2"; shift 2 ;;
+        -d|--dataset) DATASET_TYPE="$2"; shift 2 ;;
+        *) echo "Unknown option: $1"; echo "Usage: $0 -r RESOLUTION [-i INPUT] [-o OUTPUT] [-d DATASET_TYPE]"; exit 1 ;;
+    esac
+done
+
+# Check if resolution was provided
+if [ -z "${RESOLUTION:-}" ]; then
+    echo "Usage: $0 -r RESOLUTION [-i INPUT] [-o OUTPUT] [-d DATASET_TYPE]"
+    echo "Example: $0 -r 0.05"
+    echo "Example: $0 -r 0.05 -d rzsm"
+    echo "Example: $0 -r 0.05 -i /path/to/input -o /path/to/output -d rzsm"
     exit 1
 fi
 
-# Load config file if paths not provided
-if [[ $# -eq 1 ]]; then
-    [[ -f "./config.txt" ]] || { echo "Error: config.txt not found"; exit 1; }
-    source "./config.txt"
-    IN="$input_folder"
-    OUT="$output_folder"
-    : "${DATASET_TYPE:?dataset type missing}"
-    OUT="${OUT}/${DATASET_TYPE}"
-else
-    IN="${2:?ERROR: input directory required}"
-    OUT="${3:?ERROR: output directory required}"
-fi
+# Use provided or default paths
+IN="${input_folder}"
+OUT="${output_folder}/${DATASET_TYPE}"
 
 [[ -f "./gdal.txt" ]] || { echo "Error: gdal.txt not found"; exit 1; }
 source "./gdal.txt"

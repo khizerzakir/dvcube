@@ -2,8 +2,8 @@
 
 # Input and Output Paths (relative to cdo/ directory)
 # Raw data is in ../data/ folder
-# IN=../data/testdata1  # for rzsm data
-IN=../data/testdata2 # for metref data
+# IN=../data/test_data/testdata1  # for rzsm data
+IN=../data/test_data/testdata2 # for metref data
 OUT=../outputs/cdo_output
 DATASET_TYPE=metref # metref or rzsm
 # DATASET_TYPE=rzsm
