@@ -1,9 +1,12 @@
 # GDAL Preprocessing Configuration
 
 # Input and Output Paths (relative to gdal/ directory)
-input_folder=../testdata1
-#input_folder=../testdata2
+# Raw data is in ../data/ folder
+input_folder=../data/testdata1
+#input_folder=../data/testdata2
 output_folder=../outputs/gdal_output
+DATASET_TYPE=rzsm # rzsm or metref
+# DATASET_TYPE=metref
 
 # Processing Parameters
 parallel=4
