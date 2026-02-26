@@ -23,8 +23,8 @@ __pycache__/
 Thumbs.db
 
 # Data & Output
-outputs/cdo_output/
-outputs/gdal_output/
+outputs/cdo_output/*
+outputs/gdal_output/*
 FAPAR/
 METREF/
 GIT_CHEATBOOK.md

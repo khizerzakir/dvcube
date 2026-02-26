@@ -1,4 +1,4 @@
-m## Preprocessing Workflow
+## Preprocessing Workflow
 
 Preprocess climate data using **CDO** (temporal) and **GDAL** (spatial) tools, then build Zarr cubes with Xarray.
 
@@ -151,6 +151,10 @@ The notebook uses data from `outputs/cdo_output/` and `outputs/gdal_output/`.
 ---
 
 ## Acknowledgments
+
+This project is inspired by the [D&V Cube Prototype](https://user.eumetsat.int/resources/user-guides/prototype-drought-and-vegetation-data-cube-guide) by EUMETSAT. 
+
+The Climate data from [LSA-SAF](https://lsa-saf.eumetsat.int/en/). If you are using LSA SAF data in publications, follow LSA SAF attribution guidance and CC BY 4.0 requirements.
 
 This project leverages open-source tools for climate data processing:
 
