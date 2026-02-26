@@ -2,34 +2,40 @@
 set -euo pipefail
 
 # CDO Preprocessing with Dynamic Grid Generation
-# Usage: ./cdo_preprocess.sh                    (reads resolution from config.txt)
-# Usage: ./cdo_preprocess.sh 0.05               (uses specified resolution)
-# Usage: ./cdo_preprocess.sh 0.05 /in /out      (explicit paths + resolution)
+# Usage: ./cdo_preprocess.sh                                     (reads all from config.txt)
+# Usage: ./cdo_preprocess.sh -r 0.05                             (override resolution only)
+# Usage: ./cdo_preprocess.sh -r 0.05 -d rzsm                     (override resolution and dataset type)
+# Usage: ./cdo_preprocess.sh -r 0.05 -i /in -o /out -d metref    (override all)
 
-RESOLUTION="${1:-}"
 source ./config.txt
 : "${IN:?input folder missing}" "${OUT:?output folder missing}" "${DATASET_TYPE:?dataset type missing}"
 : "${WEST:?west missing}" "${SOUTH:?south missing}" "${EAST:?east missing}" "${NORTH:?north missing}"
+
+# Parse named arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -r|--resolution) RESOLUTION="$2"; shift 2 ;;
+        -i|--input) IN="$2"; shift 2 ;;
+        -o|--output) OUT="$2"; shift 2 ;;
+        -d|--dataset) DATASET_TYPE="$2"; shift 2 ;;
+        *) echo "Unknown option: $1"; echo "Usage: $0 [-r RESOLUTION] [-i INPUT] [-o OUTPUT] [-d DATASET_TYPE]"; exit 1 ;;
+    esac
+done
+
+# Apply dataset type to output path
 OUT="${OUT}/${DATASET_TYPE}"
 
 # If resolution not provided, read from config.txt RES variable
-if [ -z "$RESOLUTION" ]; then
+if [ -z "${RESOLUTION:-}" ]; then
     if [[ -v RES ]]; then
         RESOLUTION="$RES"
     else
-        echo "Usage: $0 [resolution] [input_folder] [output_folder]"
-        echo "Example: $0 0.05"
-        echo "Example: $0 0.05 /path/to/input /path/to/output"
+        echo "Usage: $0 [-r RESOLUTION] [-i INPUT] [-o OUTPUT] [-d DATASET_TYPE]"
+        echo "Example: $0 -r 0.05"
+        echo "Example: $0 -r 0.05 -d rzsm"
+        echo "Example: $0 -r 0.05 -i /path/to/input -o /path/to/output -d metref"
         exit 1
     fi
-fi
-
-# Override input/output if provided as arguments
-if [[ $# -ge 2 ]]; then
-    IN="${2}"
-fi
-if [[ $# -ge 3 ]]; then
-    OUT="${3}"
 fi
 
 # Generate grid dynamically using generate_grid.py

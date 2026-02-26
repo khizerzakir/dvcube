@@ -1,4 +1,4 @@
-## Preprocessing Workflow
+m## Preprocessing Workflow
 
 Preprocess climate data using **CDO** (temporal) and **GDAL** (spatial) tools, then build Zarr cubes with Xarray.
 
@@ -84,32 +84,58 @@ source cube-sample/bin/activate
 
 ## Running Preprocessing
 
+### Named Arguments Quick Reference
+
+Both scripts use **named arguments** (flags). You can override individual settings while keeping others from config:
+
+| Flag | Long Form | Purpose |
+|------|-----------|---------|
+| `-r` | `--resolution` | Grid resolution (required for GDAL) |
+| `-i` | `--input` | Input data folder (optional, defaults to config) |
+| `-o` | `--output` | Output folder (optional, defaults to config) |
+| `-d` | `--dataset` | Dataset type: `metref` or `rzsm` (optional) |
+
 ### CDO - Temporal Aggregation & Clipping
 
-**With config:**
+**Using config defaults:**
 ```bash
 cd cdo
 chmod +x cdo_preprocess.sh
-./cdo_preprocess.sh                    # Uses config.txt defaults
+./cdo_preprocess.sh
 ```
 
-**Without config (custom resolution):**
+**Override resolution only (keep other settings from config):**
 ```bash
-./cdo_preprocess.sh 0.05 ../data/testdata2 ../outputs/cdo_output
+./cdo_preprocess.sh -r 0.05
+```
+
+**Override resolution and dataset type:**
+```bash
+./cdo_preprocess.sh -r 0.05 -d rzsm
+```
+
+**Override everything:**
+```bash
+./cdo_preprocess.sh -r 0.05 -i ../data/testdata2 -o ../outputs/cdo_output -d metref
 ```
 
 ### GDAL - Resampling & Clipping
 
-**With config:**
+**Using config defaults (requires resolution):**
 ```bash
 cd gdal
 chmod +x gdal_warp_translate.sh
-./gdal_warp_translate.sh 0.1           # Uses config.txt paths
+./gdal_warp_translate.sh -r 0.1
 ```
 
-**Without config (explicit paths):**
+**Override resolution and dataset type:**
 ```bash
-./gdal_warp_translate.sh 0.1 ../data/testdata1 ../outputs/gdal_output
+./gdal_warp_translate.sh -r 0.1 -d rzsm
+```
+
+**Override everything:**
+```bash
+./gdal_warp_translate.sh -r 0.1 -i ../data/testdata1 -o ../outputs/gdal_output -d rzsm
 ```
 
 ### Zarr Cube Creation
