@@ -23,9 +23,13 @@ __pycache__/
 Thumbs.db
 
 # Data & Output
-outputs/
-testdata1/
-testdata2/
+outputs/cdo_output/
+outputs/gdal_output/
+FAPAR/
+METREF/
+GIT_CHEATBOOK.md
+cube_example/sah_admin0_ocha/
+cube_example/sah_pplp/
 
 # Jupyter
 .ipynb_checkpoints/

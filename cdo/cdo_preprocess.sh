@@ -55,7 +55,7 @@ process_cdo() {
     base="$(basename "$file")"
     [[ $base =~ ([0-9]{4})([0-9]{2})([0-9]{2}) ]] || { echo "No date in $base" >> "$LOG"; return 0; }
     yyyy="${BASH_REMATCH[1]}" mm="${BASH_REMATCH[2]}"
-    outdir="${OUT}/$yyyy/$mm" && mkdir -p "$outdir" && outfile="${outdir}/${base}_processed.nc"
+    outdir="${OUT}/$yyyy/$mm" && mkdir -p "$outdir" && outfile="${outdir}/${base%.nc}_processed.nc"
     [[ -f "$outfile" ]] && return 0
     
     tmp1=$(mktemp) && tmp2=$(mktemp)
