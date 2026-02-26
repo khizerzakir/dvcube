@@ -152,14 +152,14 @@ The notebook uses data from `outputs/cdo_output/` and `outputs/gdal_output/`.
 
 ## Acknowledgments
 
-This project is inspired by the [D&V Cube Prototype](https://user.eumetsat.int/resources/user-guides/prototype-drought-and-vegetation-data-cube-guide) by EUMETSAT. 
+- This project is inspired by the [D&V Cube Prototype](https://user.eumetsat.int/resources/user-guides/prototype-drought-and-vegetation-data-cube-guide) by EUMETSAT. 
 
-The Climate data from [LSA-SAF](https://lsa-saf.eumetsat.int/en/). If you are using LSA SAF data in publications, follow LSA SAF attribution guidance and CC BY 4.0 requirements.
+- The Climate data from [LSA-SAF](https://lsa-saf.eumetsat.int/en/). If you are using LSA SAF data in publications, follow LSA SAF attribution guidance and CC BY 4.0 requirements.
 
-This project leverages open-source tools for climate data processing:
+- This project leverages open-source tools for climate data processing:
 
-- **CDO** - Climate Data Operators ([https://code.mpimet.mpg.de/projects/cdo](https://code.mpimet.mpg.de/projects/cdo))
-- **GDAL** - Geospatial Data Abstraction Library ([https://gdal.org/](https://gdal.org/))
-- **NCO** - NetCDF Operators ([http://nco.sourceforge.net/](http://nco.sourceforge.net/))
-- **Xarray** - Data structures for N-dimensional arrays ([http://xarray.pydata.org/](http://xarray.pydata.org/))
-- **Zarr** - Cloud-native array storage ([https://zarr.dev/](https://zarr.dev/))
+    - **CDO** - Climate Data Operators ([https://code.mpimet.mpg.de/projects/cdo](https://code.mpimet.mpg.de/projects/cdo))
+    - **GDAL** - Geospatial Data Abstraction Library ([https://gdal.org/](https://gdal.org/))
+    - **NCO** - NetCDF Operators ([http://nco.sourceforge.net/](http://nco.sourceforge.net/))
+    - **Xarray** - Data structures for N-dimensional arrays ([http://xarray.pydata.org/](http://xarray.pydata.org/))
+    - **Zarr** - Cloud-native array storage ([https://zarr.dev/](https://zarr.dev/))
