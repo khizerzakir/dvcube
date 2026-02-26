@@ -1,0 +1,298 @@
+{
+  "attributes": {
+    "CDI": "Climate Data Interface version 2.0.4 (https://mpimet.mpg.de/cdi)",
+    "Conventions": "CF-1.6",
+    "institution": "IM-PT",
+    "date_created": "2020-11-09T17:30:27Z",
+    "algorithm_version": "1.3.2",
+    "base_algorithm_version": "1.0.3",
+    "processing_level": "03",
+    "platform": "MSG2",
+    "sensor": "SEVI",
+    "parent_product_name": "METREF;QFLAGS;-;-",
+    "time_coverage_start": "2010-01-01T00:00:00Z",
+    "image_reference_time": "2010-01-01T00:00:00Z",
+    "name": "METREF",
+    "region_name": "MSG-Disk",
+    "archive_facility": "IPMA",
+    "license": "Data is freely available for users registered at the LSA SAF website - lsa-saf.eumetsat.int",
+    "history": "Thu Feb 12 09:37:53 2026: cdo -L -f nc4 -O -sellonlatbox,-20.0,55.0,10.0,20.0 /tmp/tmp.6XeiiIecD3 /home/kzakir/dvcube/test/outputs/cdo_output/metref/2010/01/NETCDF4_LSASAF_MSG_METREF_MSG-Disk_201001010000_processed.nc\nThu Feb 12 09:37:53 2026: cdo -L -f nc4 -O -remapbil,./grid.txt /tmp/tmp.IpaSRtEKB9 /tmp/tmp.6XeiiIecD3\nThu Feb 12 09:37:52 2026: cdo -L -f nc4 -O -sellonlatbox,-20.2,55.2,9.8,20.2 /home/kzakir/dvcube/test/testdata2/01/NETCDF4_LSASAF_MSG_METREF_MSG-Disk_201001010000.nc /tmp/tmp.IpaSRtEKB9\n2020-11-09T17:30:27Z - NetCDF reprojected product ; 2019-02-15T21:21:21Z Original product file created: HDF5_LSASAF_MSG_METREF_MSG-Disk_201001010000",
+    "geospatial_lat_resolution": " 0.05",
+    "geospatial_lon_resolution": " 0.05",
+    "northernmost_latitude": 80.0,
+    "southernmost_latitude": -80.0,
+    "references": "Data provided by the EUMETSAT Satellite Application Facility on Land Surface Analysis (LSA SAF; Trigo et al., 2011) http://lsa-saf.eumetsat.int Trigo, I. F., C. C. DaCamara, P. Viterbo, J.-L. Roujean, F. Olesen, C. Barroso, F. Camacho-de Coca, D. Carrer, S. C. Freitas, J. Garc\u00eda-Haro, B. Geiger, F. Gellens-Meulenberghs, N. Ghilain, J. Meli\u00e1, L. Pessanha, N. Siljamo, and A. Arboleda, 2011: The Satellite Application Facility on Land Surface Analysis. Int. J. Remote Sens., 32, 2725-2744, doi: 10.1080/01431161003743199",
+    "easternmost_longitude": -80.0,
+    "westernmost_longitude": 80.0,
+    "spatial_resolution": " 0.05x 0.05",
+    "geospatial_lat_units": "degrees_north",
+    "geospatial_lon_units": "degrees_east",
+    "netcdf_version_id": "netCDF4",
+    "CDO": "Climate Data Operators version 2.0.4 (https://mpimet.mpg.de/cdo)"
+  },
+  "zarr_format": 3,
+  "consolidated_metadata": {
+    "kind": "inline",
+    "must_understand": false,
+    "metadata": {
+      "lat": {
+        "shape": [
+          200
+        ],
+        "data_type": "float64",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              200
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": "NaN",
+        "codecs": [
+          {
+            "name": "bytes",
+            "configuration": {
+              "endian": "little"
+            }
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "standard_name": "latitude",
+          "long_name": "latitude",
+          "units": "degrees_north",
+          "axis": "Y",
+          "_FillValue": "AAAAAAAA+H8="
+        },
+        "dimension_names": [
+          "lat"
+        ],
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
+      "lon": {
+        "shape": [
+          1500
+        ],
+        "data_type": "float64",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              1500
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": "NaN",
+        "codecs": [
+          {
+            "name": "bytes",
+            "configuration": {
+              "endian": "little"
+            }
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "standard_name": "longitude",
+          "long_name": "longitude",
+          "units": "degrees_east",
+          "axis": "X",
+          "_FillValue": "AAAAAAAA+H8="
+        },
+        "dimension_names": [
+          "lon"
+        ],
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
+      "METREF": {
+        "shape": [
+          5,
+          200,
+          1500
+        ],
+        "data_type": "int32",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              1,
+              200,
+              256
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": 0,
+        "codecs": [
+          {
+            "name": "bytes",
+            "configuration": {
+              "endian": "little"
+            }
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "long_name": "METREF",
+          "units": "mm/day",
+          "add_offset": 0.0,
+          "scale_factor": 0.01,
+          "missing_value": -8000,
+          "_FillValue": -8000
+        },
+        "dimension_names": [
+          "time",
+          "lat",
+          "lon"
+        ],
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
+      "quality_flag": {
+        "shape": [
+          5,
+          200,
+          1500
+        ],
+        "data_type": "int32",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              1,
+              200,
+              256
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": 0,
+        "codecs": [
+          {
+            "name": "bytes",
+            "configuration": {
+              "endian": "little"
+            }
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "long_name": "QFLAGS",
+          "missing_value": -1,
+          "_FillValue": -1
+        },
+        "dimension_names": [
+          "time",
+          "lat",
+          "lon"
+        ],
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
+      "time": {
+        "shape": [
+          5
+        ],
+        "data_type": "float64",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              5
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": "NaN",
+        "codecs": [
+          {
+            "name": "bytes",
+            "configuration": {
+              "endian": "little"
+            }
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "standard_name": "time",
+          "long_name": "time",
+          "axis": "T",
+          "units": "seconds since 2010-01-01T00:00:00+00:00",
+          "calendar": "standard",
+          "_FillValue": "AAAAAAAA+H8="
+        },
+        "dimension_names": [
+          "time"
+        ],
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      }
+    }
+  },
+  "node_type": "group"
+}
