@@ -27,6 +27,8 @@ outputs/cdo_output/*
 outputs/gdal_output/*
 data/FAPAR/
 data/METREF/
+data/test_data/*
+zarr_cube/*
 GIT_CHEATBOOK.md
 cube_example/sah_admin0_ocha/
 cube_example/sah_pplp/

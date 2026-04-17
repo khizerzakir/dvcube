@@ -1,6 +1,6 @@
 gridtype = lonlat
-xsize = 1500
-ysize = 200
+xsize = 1501
+ysize = 201
 xfirst = -20.0
 yfirst = 10.0
 xinc = 0.05

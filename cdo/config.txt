@@ -3,18 +3,20 @@
 # Input and Output Paths (relative to cdo/ directory)
 # Raw data is in ../data/ folder
 # IN=../data/test_data/testdata1  # for rzsm data
-IN=../data/test_data/testdata2 # for metref data
-OUT=../outputs/cdo_output
-DATASET_TYPE=metref # metref or rzsm
-# DATASET_TYPE=rzsm
+IN=/data/dv-data/raw/test
+OUT=/data/dv-data/cdo_processed 
+DATASET_TYPE=FAPAR_try
+
+# DATASET_TYPE (could be lst, metref or whatever)
 GRID=./grid.txt
 
 # Processing Parameters
-PARALLEL=4
+PARALLEL=1
 REMAP_METHOD=bilinear
 BUFFER=0.2
 RES=0.05
-# RES=0.1
+TIME_TYPE=daily
+
 # Sahel Region Bounding Box
 WEST=-20.0
 SOUTH=10.0
