@@ -12,8 +12,8 @@ from pathlib import Path
 
 def calculate_grid_size(resolution, lon_min, lon_max, lat_min, lat_max):
     """Calculate xsize and ysize based on resolution and domain"""
-    xsize = int(round((lon_max - lon_min) / resolution))
-    ysize = int(round((lat_max - lat_min) / resolution))
+    xsize = int(round((lon_max - lon_min) / resolution)) + 1  # +1 to include the endpoint
+    ysize = int(round((lat_max - lat_min) / resolution)) + 1  # +1 to include the endpoint
     return xsize, ysize
 
 

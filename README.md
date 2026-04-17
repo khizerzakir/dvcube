@@ -140,6 +140,10 @@ chmod +x gdal_warp_translate.sh
 
 ### Zarr Cube Creation
 
+Using `nc2zarr` library we are going to convert the nc files into one zarr cube.
+- We have to create yml files to support the processing
+`common-yml` and `fapar_{year} OR {month}` specific.
+- Then in the dedicated environment we can simply run the `nc2zarr -c xxx.yml`
 Open and run the notebook to build Zarr cubes from processed data:
 ```bash
 cd cube_example
