@@ -25,8 +25,7 @@ Thumbs.db
 # Data & Output
 outputs/cdo_output/*
 outputs/gdal_output/*
-data/FAPAR/
-data/METREF/
+data/*
 data/test_data/*
 zarr_cube/*
 GIT_CHEATBOOK.md
