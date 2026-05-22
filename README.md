@@ -138,7 +138,7 @@ chmod +x gdal_warp_translate.sh
 ./gdal_warp_translate.sh -r 0.1 -i ../data/testdata1 -o ../outputs/gdal_output -d rzsm
 ```
 
-### Zarr Cube Creation
+### Zarr Cube Creation (Experimental Still)
 
 Using `nc2zarr` library we are going to convert the nc files into one zarr cube.
 - We have to create yml files to support the processing
