@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# If invoked via sh, restart in bash before any bash-specific syntax is parsed.
+if [ -z "${BASH_VERSION:-}" ]; then
+    exec /usr/bin/env bash "$0" "$@"
+fi
+
 # CDO Preprocessing with Dynamic Grid Generation
 # show only one usage with all options, and read some options from config.txt
 # Usage: cdo_preprocess.sh -r 0.25 -i /data/raw -o /data/processed -d FAPAR --time-type subdaily --run-merge --overwrite
@@ -187,12 +192,16 @@ fi
 
 END_ALL=$(date +%s)
 ELAPSED=$((END_ALL - START_ALL))
+DAYS=$((ELAPSED / 86400))
+HOURS=$(((ELAPSED % 86400) / 3600))
+MINUTES=$(((ELAPSED % 3600) / 60))
+SECONDS=$((ELAPSED % 60))
 
 {
     echo "---"
     echo "Preprocessing completed at $(date)"
-    printf "Total time: %02d:%02d:%02d (%s seconds)\n" \
-        "$((ELAPSED / 3600))" "$((ELAPSED % 3600 / 60))" "$((ELAPSED % 60))" "$ELAPSED"
+    printf "Total time: %d day(s), %02d hour(s), %02d minute(s), %02d second(s) (%s seconds)\n" \
+        "$DAYS" "$HOURS" "$MINUTES" "$SECONDS" "$ELAPSED"
 
 } >> "$LOG"
-echo "Preprocessing finished. Total time: $ELAPSED seconds. See $LOG for details."
+echo "Preprocessing finished. Total time: ${DAYS}d-${HOURS}h-${MINUTES}m-${SECONDS}s. See $LOG for details."
