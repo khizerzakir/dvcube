@@ -9,6 +9,8 @@ set -euo pipefail
 [[ -f "./config.txt" ]] || { echo "Error: config.txt not found"; exit 1; }
 source "./config.txt"
 : "${DATASET_TYPE:?dataset type missing}"
+PARALLEL="${parallel:-4}"
+GDAL_CONFIG="${source_gdal:-gdal.txt}"
 
 # Parse named arguments
 while [[ $# -gt 0 ]]; do
@@ -34,8 +36,8 @@ fi
 IN="${input_folder}"
 OUT="${output_folder}/${DATASET_TYPE}"
 
-[[ -f "./gdal.txt" ]] || { echo "Error: gdal.txt not found"; exit 1; }
-source "./gdal.txt"
+[[ -f "${GDAL_CONFIG}" ]] || { echo "Error: ${GDAL_CONFIG} not found"; exit 1; }
+source "${GDAL_CONFIG}"
 
 RES_X="$RESOLUTION"
 RES_Y="$RESOLUTION"
@@ -56,10 +58,16 @@ get_var_name() { echo "$1" | awk -F':' '{print $NF}' | sed 's/^[[:space:]]*//;s/
 # Warp subdataset
 warp_sub() {
     local sub="$1" var="$2" out="$3"
-    gdalwarp -overwrite -s_srs EPSG:4326 -t_srs EPSG:4326 -of NetCDF \
+    if gdalwarp -overwrite -s_srs EPSG:4326 -t_srs EPSG:4326 -of NetCDF \
         -te "$TE_W" "$TE_S" "$TE_E" "$TE_N" \
-        -tr "$RES_X" "$RES_Y" -r "$RESAMPLE_METHOD" -dstnodata "$NODATA" "$sub" "$out" 2>>"$LOG" && \
-    ncrename -v "Band1","$var" "$out" 2>>"$LOG" || true
+        -tr "$RES_X" "$RES_Y" -r "$RESAMPLE_METHOD" -dstnodata "$NODATA" "$sub" "$out" 2>>"$LOG"; then
+        if ncrename -v "Band1","$var" "$out" 2>>"$LOG"; then
+            return 0
+        fi
+    fi
+
+    rm -f "$out"
+    return 1
 }
 
 # Process file
@@ -83,5 +91,5 @@ export OUT LOG RES_X RES_Y TE_W TE_S TE_E TE_N RESAMPLE_METHOD NODATA
 
 start=$(date +%s)
 find "$IN" -type f \( -iname "*.nc" -o -iname "*.NC" \) ! -iname "test.nc" ! -iname "output.nc" -print0 | \
-    xargs -0 -P 4 -I {} bash -c 'process_file "$@"' _ {}
+    xargs -0 -P "$PARALLEL" -I {} bash -c 'process_file "$@"' _ {}
 echo "" >> "$LOG" && echo "Finished at $(date) - Time: $(($(date +%s)-start))s" >> "$LOG"

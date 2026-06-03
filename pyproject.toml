@@ -22,7 +22,7 @@ dependencies = [
     "jupyter>=1.1.1",
     "xarray>=2025.11.0",
     "h5py>=3.15.1",
-    "lexcube>=1.0.3",
+    "lexcube==2.0.1",
     "retry>=0.9.2",
     "xvec>=0.5.2",
     "joblib>=1.5.3",
@@ -30,4 +30,9 @@ dependencies = [
     "plotly>=6.7.0",
     "pyarrow>=24.0.0",
     "fastparquet>=2026.5.0",
+    "bokeh>=3.9.0",
+    "topozarr>=0.0.6",
+    "kerchunk>=0.2.10",
+    "tqdm>=4.67.3",
+    "zarrio>=0.1.1",
 ]
