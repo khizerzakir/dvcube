@@ -1,186 +1,123 @@
-# CDO Preprocessing with Dynamic Grid Generation
+# CDO preprocessing
 
-Unified CDO preprocessing with dynamic grid generation based on resolution parameter.
+This folder contains a small CDO-based preprocessing pipeline for NetCDF files. The main script is `cdo_preprocess.sh`, which clips input data to a Sahel bounding box, remaps it to a generated lon/lat grid, and writes processed files into a date-based output tree.
 
-## Quick Start
+## Scripts
 
-### Option 1: Use Default Resolution (from config.txt)
-```bash
-./cdo_preprocess.sh
-```
-Uses `RES` variable from `config.txt` (default: 0.05)
+- `cdo_preprocess.sh` is the main entry point.
+- `process_data.sh` is a convenience wrapper that validates arguments and forwards them to `cdo_preprocess.sh`.
+- `cdo_merge_daily.sh` merges processed `.nc` files within each output directory into a single `merged_YYYYMMDD.nc` file.
+- `generate_grid.py` generates `grid.txt` from the domain definition in `config_resolution.yaml`.
 
-### Option 2: Specify Resolution
-```bash
-./cdo_preprocess.sh 0.05
-./cdo_preprocess.sh 0.1
-```
-Overrides default resolution and auto-generates grid
+## Requirements
 
-### Option 3: Custom Input/Output Paths
-```bash
-./cdo_preprocess.sh 0.05 /path/to/input /path/to/output
-```
+- `bash`
+- `python3`
+- `cdo`
+- `PyYAML` for `generate_grid.py`
 
-## How It Works
+## Configuration
 
-1. **config.txt** - Contains `RES` variable (default resolution), input/output paths, and domain bounds
-2. **config_resolution.yaml** - Contains domain boundaries and dataset resolutions (reference only)
-3. **generate_grid.py** - Reads config and generates `grid.txt` dynamically based on resolution
-4. **cdo_preprocess.sh** - Main preprocessing script that:
-   - Accepts resolution as parameter (or reads from config.txt)
-   - Auto-generates grid.txt using generate_grid.py
-   - Runs CDO processing pipeline
-   - Outputs results to configured output directory
+`config.txt` is sourced by `cdo_preprocess.sh` and provides the default runtime settings:
 
-## Available Resolutions
+- `IN`: input folder
+- `OUT`: output folder
+- `DATASET_TYPE`: output subfolder name
+- `RES`: default resolution in degrees
+- `PARALLEL`: number of parallel workers
+- `REMAP_METHOD`: `bilinear` or `nearest`
+- `BUFFER`: clip margin in degrees
+- `WEST`, `SOUTH`, `EAST`, `NORTH`: processing bounds
 
-Edit `config.txt` `RES` variable to change default resolution:
-```bash
-RES=0.05    # METREF resolution (smaller = higher detail, slower)
-RES=0.1     # SM resolution (larger = lower detail, faster)
-RES=0.02    # Custom high-resolution processing
-```
+`config_resolution.yaml` defines the grid domain used by `generate_grid.py`:
 
-## Usage Examples
+- `lon_min`, `lon_max`
+- `lat_min`, `lat_max`
+- example dataset resolutions such as `metref` at `0.05` and `sm` at `0.1`
 
-### Basic Usage (uses default from config.txt)
+## Main workflow
 
-In this case you need to make changes in your config file 
+`cdo_preprocess.sh` accepts these options:
+
+- `-r, --resolution <value>`
+- `-i, --input <folder>`
+- `-o, --output <folder>`
+- `-d, --dataset <name>`
+- `-t, --time-type daily|subdaily`
+- `-p, --parallel <n>`
+- `--run-merge`
+- `--overwrite`
+
+If a value is not passed on the command line, the script falls back to `config.txt`. The script then:
+
+1. Generates `grid.txt` with `python3 generate_grid.py --resolution <value>`.
+2. Clips each input `.nc` file to the buffered domain.
+3. Remaps the clipped file to the generated grid.
+4. Writes the result as `<name>_processed.nc`.
+5. Logs progress to `cdo.log` in the dataset output folder.
+
+For `daily` mode, output is written to `OUT/<dataset>/<YYYY>/<MM>/`.
+For `subdaily` mode, output is written to `OUT/<dataset>/<YYYY>/<MM>/<DD>/`.
+
+## Example usage
+
+Run with the values from `config.txt`:
+
 ```bash
 cd /home/kzakir/dvcube/test/cdo
 ./cdo_preprocess.sh
 ```
 
-otherwise, you can use the following configuration as well
+Override the resolution, input, output, and dataset:
 
-### METREF Processing (0.05° resolution)
 ```bash
-./cdo_preprocess.sh 0.05
+./cdo_preprocess.sh -r 0.05 -i /path/to/input -o /path/to/output -d FAPAR -t daily
 ```
-- Auto-generates grid with 1500×200 cells
-- Processes all .nc files in `testdata1`
-- Outputs to `outputs/cdo_output`
 
-### SM Processing (0.1° resolution)
+Use the wrapper script instead:
+
 ```bash
-./cdo_preprocess.sh 0.1
-```
-- Auto-generates grid with 750×100 cells
-- Processes all .nc files
-- Outputs to `outputs/cdo_output`
-
-### Custom Resolution with Custom Paths
-```bash
-./cdo_preprocess.sh 0.02 ../inputs/custom_data ../outputs/custom_output
-```
-- Uses 0.02° resolution
-- Reads from `../inputs/custom_data`
-- Outputs to `../outputs/custom_output`
-
-## Grid Calculation
-
-Formula used by `generate_grid.py`:
-```
-xsize = (lon_max - lon_min) / resolution
-ysize = (lat_max - lat_min) / resolution
+./process_data.sh -i /path/to/input -o /path/to/output -d FAPAR -t subdaily -r 0.1 --merge
 ```
 
-Example calculations:
-```
-Resolution 0.05°:
-  xsize = (55 - (-20)) / 0.05 = 1500
-  ysize = (20 - 10) / 0.05 = 200
-  Total cells = 300,000
+## Grid generation
 
-Resolution 0.1°:
-  xsize = (55 - (-20)) / 0.1 = 750
-  ysize = (20 - 10) / 0.1 = 100
-  Total cells = 75,000
+`generate_grid.py` reads `config_resolution.yaml` and writes `grid.txt`.
 
-Resolution 0.02°:
-  xsize = (55 - (-20)) / 0.02 = 3750
-  ysize = (20 - 10) / 0.02 = 500
-  Total cells = 1,875,000
-```
-
-## Processing Pipeline
-
-What happens when you run `./cdo_preprocess.sh 0.05`:
-
-1. **Resolution Parameter** → Uses 0.05 (or reads from config.txt if not specified)
-2. **Config Loading** → Reads `config.txt` for IN, OUT, domain bounds
-3. **Grid Generation** → Calls `python3 generate_grid.py --resolution 0.05`
-   - Creates `grid.txt` with calculated xsize/ysize
-4. **CDO Processing** (for each .nc file in parallel):
-   - Step 1: Buffer clip (add 0.2° margin around domain)
-   - Step 2: Remap to grid using bilinear interpolation
-   - Step 3: Final exact clip to domain bounds
-5. **Output** → Organized by year/month: `outputs/cdo_output/YYYY/MM/`
-6. **Logging** → Progress saved to `outputs/cdo_output/cdo.log`
-
-## Advanced: Manual Grid Generation
-
-If you only want to generate grid without processing:
 ```bash
 python3 generate_grid.py --resolution 0.05
 python3 generate_grid.py --resolution 0.1 --output custom_grid.txt
 ```
 
-## Configuration Files
+The grid size is calculated from the configured domain and the requested resolution. The script uses an inclusive endpoint calculation, so the number of cells is:
 
-### config.txt
-```bash
-IN=../testdata1              # Input folder path
-OUT=../outputs/cdo_output    # Output folder path
-RES=0.05                     # Default resolution
-PARALLEL=4                   # Number of parallel processes
-REMAP_METHOD=bilinear        # CDO remapping method
-BUFFER=0.2                   # Buffer zone around domain (degrees)
-WEST=-20.0                   # Domain bounds (Sahel region)
-SOUTH=10.0
-EAST=55.0
-NORTH=20.0
+```text
+xsize = round((lon_max - lon_min) / resolution) + 1
+ysize = round((lat_max - lat_min) / resolution) + 1
 ```
 
-### config_resolution.yaml
-```yaml
-domain:
-  lon_min: -20.0             # Western boundary
-  lon_max: 55.0              # Eastern boundary
-  lat_min: 10.0              # Southern boundary
-  lat_max: 20.0              # Northern boundary
-datasets:
-  metref:
-    resolution: 0.05         # METREF dataset resolution
-  sm:
-    resolution: 0.1          # SM dataset resolution
-```
+## Merge step
 
-## Troubleshooting
+`cdo_merge_daily.sh` groups `.nc` files by their containing directory and creates one merged file per directory:
 
-### "Error generating grid"
-- Ensure `config_resolution.yaml` exists with proper domain values
-- Check that `generate_grid.py` is executable: `chmod +x generate_grid.py`
+- input: `-i <folder>`
+- output: `-o <folder>`
+- parallelism: `-p <n>`
+- optional overwrite: `--overwrite`
 
-### "Error: input folder missing"
-- Set `IN` in `config.txt` or provide explicit path: `./cdo_preprocess.sh 0.05 /path/in /path/out`
+This is called automatically by `cdo_preprocess.sh` only when `--run-merge` is set and the time type is `subdaily`.
 
-### Processing is slow
-- Reduce resolution (0.1 instead of 0.05)
-- Increase parallel processes: Edit `PARALLEL=8` in config.txt
-- Check available disk space for output
+## Output layout
 
-## Output Structure
-
-```
-outputs/cdo_output/
+```text
+<OUT>/<DATASET_TYPE>/
+├── cdo.log
 ├── 2010/
 │   ├── 01/
-│   │   ├── filename_201001010000.nc_processed.nc
-│   │   ├── filename_201001020000.nc_processed.nc
+│   │   ├── file_201001010000_processed.nc
 │   │   └── ...
-│   ├── 02/
-│   └── ...
-└── cdo.log                  # Processing log with timestamps and times
+│   └── 02/
+└── ...
 ```
+
+When merge is enabled, a second tree is written next to the main output directory, using the suffix `_daily_15min`.
