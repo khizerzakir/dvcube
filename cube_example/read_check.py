@@ -1,9 +1,13 @@
 import sys
 from pathlib import Path
 
+import numpy as np
 import rioxarray
 import xarray as xr
+import matplotlib.pyplot as plt
 
+# USAGE:
+# python cube_example/read_check.py /path/to/netcdf_or_directory [optional_file_name] [optional_save_path]
 
 def check(data_path: str | Path, file_name: str | None = None) -> Path:
     """Validate a file or directory path and return the NetCDF file to open."""
@@ -45,17 +49,33 @@ def read(data_path: str | Path, file_name: str | None = None) -> tuple[xr.Datase
     return dataset, netcdf_file
 
 
-def plot(dataset: xr.Dataset, variable_name: str, crs: str = "EPSG:4326") -> None:
+def plot(dataset: xr.Dataset, variable_name: str, crs: str = "EPSG:4326", save_path: str | None = None) -> None:
     """Assign a CRS and plot a variable from the dataset."""
 
     if variable_name not in dataset.data_vars:
         raise KeyError(f"The variable {variable_name} does not exist in the dataset.")
 
     assigned = dataset.rio.write_crs(crs, inplace=False)
-    assigned[variable_name].plot()
+    
+    # Calculate proper aspect ratio for geographic coordinates
+    mean_lat = np.radians(float(assigned['lat'].mean()))
+    aspect_ratio = 1.0 / np.cos(mean_lat)
+    
+    fig, ax = plt.subplots(figsize=(14, 5), constrained_layout=True)
+    
+    assigned[variable_name].plot(ax=ax, cmap="viridis", add_colorbar=False)
+    ax.set_aspect(aspect_ratio)
+    ax.set_xlabel('Longitude [degrees]')
+    ax.set_ylabel('Latitude [degrees]')
+    # legend bar horizontal under the plot
+    fig.colorbar(ax.collections[0], ax=ax, orientation='horizontal', pad=0.07, label=variable_name)
+    plt.title(f"{variable_name} - {crs}", fontsize=14, fontweight="bold")
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.show()
 
 
-def main(data_path: str | Path | None = None, file_name: str | None = None, variable_name: str | None = None) -> None:
+def main(data_path: str | Path | None = None, file_name: str | None = None, variable_name: str | None = None, save_path: str | None = None) -> None:
     if data_path is None:
         data_path = input("Enter the path to a NetCDF file or data directory: ").strip()
     
@@ -80,7 +100,7 @@ def main(data_path: str | Path | None = None, file_name: str | None = None, vari
         ).strip()
 
     try:
-        plot(dataset, variable_name)
+        plot(dataset, variable_name, save_path=save_path)
     except Exception as exc:
         print(f"An error occurred while plotting {variable_name} from {netcdf_file}: {exc}")
         sys.exit(1)
@@ -88,3 +108,4 @@ def main(data_path: str | Path | None = None, file_name: str | None = None, vari
 
 if __name__ == "__main__":
     main()
+
