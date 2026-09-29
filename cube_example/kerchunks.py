@@ -234,7 +234,6 @@ def create_kerchunk_references(data_path: str | Path) -> Path:
 
     return combined_json
 
-
 if __name__ == "__main__":
     input_path = input(
         "Enter the directory containing the NetCDF files: "

@@ -9,6 +9,30 @@ import matplotlib.pyplot as plt
 # USAGE:
 # python cube_example/read_check.py /path/to/netcdf_or_directory [optional_file_name] [optional_save_path]
 
+import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
+
+metref_colors = [
+    (0.00, "#f1f1f1"),  # very low / near zero
+    (0.08, "#556691"),
+    (0.12, "#112182"),  # dark blue
+    (0.22, "#135aba"),
+    (0.32, "#449bf3"),  # blue
+    (0.42, "#c5eefd"),  # pale blue
+    (0.50, "#ffd55c"),  # yellow
+    (0.60, "#ff8800"),  # orange
+    (0.70, "#f11c00"),  # red
+    (0.80, "#ae2716"),  # dark red
+    (0.90, "#7e0007"),
+    (1.00, "#510056"),  # purple / extreme
+]
+
+metref_cmap = LinearSegmentedColormap.from_list(
+    "METREF",
+    metref_colors,
+    N=256
+)
+
 def check(data_path: str | Path, file_name: str | None = None) -> Path:
     """Validate a file or directory path and return the NetCDF file to open."""
 
@@ -63,15 +87,24 @@ def plot(dataset: xr.Dataset, variable_name: str, crs: str = "EPSG:4326", save_p
     
     fig, ax = plt.subplots(figsize=(14, 5), constrained_layout=True)
     
-    assigned[variable_name].plot(ax=ax, cmap="viridis", add_colorbar=False)
+    assigned[variable_name].plot(ax=ax, cmap=metref_cmap, add_colorbar=False)
     ax.set_aspect(aspect_ratio)
     ax.set_xlabel('Longitude [degrees]')
     ax.set_ylabel('Latitude [degrees]')
-    # legend bar horizontal under the plot
-    fig.colorbar(ax.collections[0], ax=ax, orientation='horizontal', pad=0.07, label=variable_name)
+    # Keep the horizontal legend bar compact so it does not dominate the figure
+    fig.colorbar(
+        ax.collections[0],
+        ax=ax,
+        orientation='horizontal',
+        pad=0.06,
+        fraction=0.035,
+        shrink=0.8,
+        aspect=30,
+        label=variable_name,
+    )
     plt.title(f"{variable_name} - {crs}", fontsize=14, fontweight="bold")
     if save_path:
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        plt.savefig(save_path, dpi=500, bbox_inches='tight')
     plt.show()
 
 
