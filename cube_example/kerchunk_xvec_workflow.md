@@ -139,6 +139,7 @@ Run the complete Kerchunk workflow
 
 ```python
 func {create_kerchunk_references}
+**/home/kzakir/test/cube-sample/bin/python kerchunks.py**
 ```
 
 
