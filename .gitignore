@@ -30,10 +30,12 @@ data/test_data/*
 zarr_cube/*
 GIT_CHEATBOOK.md
 cube_example/sah_admin0_ocha/
-cube_example/sah_pplp/
+cube_example/fapar_halfmonth.zarr/
 cube-sample/
 # Jupyter
 .ipynb_checkpoints/
 
 # Logs
 *.log
+
+eumetsat/

@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import xarray as xr
 
-from cube_example.kerchunks import combine_single_refs, make_single_ref
+from dvcube.cube_example.kerchunks import combine_single_refs, make_single_ref
 
 class KerchunkWorkflowTests(unittest.TestCase):
     def test_single_to_multi_refs_work(self) -> None:
