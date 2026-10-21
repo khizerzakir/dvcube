@@ -598,12 +598,23 @@ def plot_zone_timeseries(
                 min_periods=1,
             ).mean()
 
+        time_values = series[resolved_time].values
+        years = np.asarray(
+            [getattr(value, "year", str(value)[:4]) for value in time_values]
+        )
+        marker_positions = None
+        if marker is not None and len(years) > 0:
+            marker_positions = np.flatnonzero(
+                np.r_[True, years[1:] != years[:-1]]
+            )
+
         ax.plot(
-            series[resolved_time].values,
+            time_values,
             series.values,
             label=label,
             linewidth=linewidth,
             marker=marker,
+            markevery=marker_positions,
         )
 
     ax.set_xlabel("Date")
